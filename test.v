@@ -1,6 +1,11 @@
 `timescale 1ns/100ps
 module test();
 
+	/**
+	* This is our testbench for the top_level module by sending a value to the
+	* spart. The driver should send the same data back, which can be displayed
+	* through the waveform.
+	*/
 	reg clk, rst, rxd;
 	wire txd;
 	integer i;
@@ -19,27 +24,22 @@ module test();
 	end
 reg [7:0] value;
 	initial begin
-	value = 8'b11011100;
+	//set data to be sent
+	value = 8'ha6;
 	rxd = 1;
 	#100;
+	// send start bit
 	rxd = 0;
 	#320;
+	// send data bit
 	for(i = 0; i < 8; i=i+1) begin
 		rxd = value[i];
 		#320;
 	end
+	// send stop bit
 	rxd = 1;
-	forever begin
-		$display("txd =%b tbr =%b",txd, iTOP.tbr);
-	#320;
-end
 	end
 
 	initial
-		#8000 $finish;
-	initial
-	begin
-		//#1 $display("time =%6d, TxD=%b, RxD = %b, rda = %b, tbr = %b",$time,txd,rxd,iTOP.rda,iTOP.tbr);
-		//forever #10 $display("time =%6d, TxD=%b, RxD = %b Enable = %b, Signal = %h Count = %h",$time,txd,rxd,iTOP.spart0.Enable, iTOP.spart0.iRECE.Signal_C,iTOP.spart0.iRECE.Counter);
-	end
+		#8000 $stop;
 endmodule
